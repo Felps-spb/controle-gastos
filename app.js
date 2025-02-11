@@ -4,7 +4,7 @@ const session = require('express-session');
 const path = require('path');
 const mongoose = require('mongoose')
 const app = express();
-const port = 8080
+
 
 const Pessoa = require('./BackEnd/models/pessoa');
 const Transacao = require('./BackEnd/models/transacao');
@@ -89,6 +89,8 @@ app.use('/pessoa', usuarioRoutes);
 const transacaoRoutes = require('./BackEnd/routes/transacao');
 app.use('/transacao', transacaoRoutes)
 
+
+const port = process.env.port || 8080
 app.listen(port, () => {
     console.log(`http://localhost:${port}`);
 });
