@@ -33,6 +33,11 @@ utilizando tecnologias modernas e boas práticas de desenvolvimento.
 > Frontend:
 
 - Handlebars: Engine de templates para renderização de páginas HTML.
+  ```
+  npm install express-handlebars
+  ```
+
+  
 
 - Bootstrap: Framework CSS para design responsivo e componentes pré-estilizados.
 
