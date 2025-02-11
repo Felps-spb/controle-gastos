@@ -1,0 +1,28 @@
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-4">Controle de Gastos</h1>
+        <p class="lead">sistema de controle de gastos residenciais</p>
+    </div>
+</div>
+
+
+
+<h2>Transações:</h2>
+<ul class="list-group">
+    {{#each pessoas}}
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+                <div class="card-header">{{this.nome}}</div>
+                <div class="card-body">
+                    <h5 class="card-title">Saldo: R$ {{this.saldo}}</h5>
+                    <p class="card-text text-success">Receitas: R$ {{this.receitas}}</p>
+                    <p class="card-text text-danger">Despesas: R$ -{{this.despesas}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{else}}
+    <li class="list-group-item">Nenhuma pessoa cadastrada.</li>
+    {{/each}}
+</ul>

@@ -1,0 +1,78 @@
+<div class="container mt-5">
+    <div class="card rounded-3 shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0">Cadastrar Transação</h2>
+        </div>
+        <div class="card-body">
+            <form action="/transacao/cadastrarTransacao/nova" method="POST">
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição</label>
+                    <input type="text" class="form-control" id="descricao" name="descricao" required>
+                </div>
+                <div class="mb-3">
+                    <label for="valor" class="form-label">Valor</label>
+                    <input type="number" step="0.01" class="form-control" id="valor" name="valor" min="0" required>
+                </div>
+                <div class="mb-3">
+                    <label for="pessoa" class="form-label">Pessoa</label>
+                    <select class="form-select" id="pessoa" name="pessoa" required>
+                        {{#each pessoas}}
+                        <option value="{{this._id}}" data-idade="{{this.idade}}">{{this.nome}}</option>
+                        {{else}}
+                        <option disabled>Nenhuma pessoa cadastrada</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo" required>
+                        <option value="despesa">Despesa</option>
+                        <option value="receita">Receita</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pessoaSelect = document.getElementById('pessoa');
+        if (pessoaSelect) {
+            pessoaSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const idade = parseInt(selectedOption.getAttribute('data-idade'), 10);
+                const tipoSelect = document.getElementById('tipo');
+
+                // Limpa as opções atuais
+                tipoSelect.innerHTML = '';
+
+                if (!isNaN(idade)) {
+                    if (idade < 18) {
+                        // Adiciona apenas a opção "Despesa"
+                        const optionDespesa = document.createElement('option');
+                        optionDespesa.value = 'despesa';
+                        optionDespesa.textContent = 'Despesa';
+                        tipoSelect.appendChild(optionDespesa);
+                    } else {
+                        // Adiciona as opções "Despesa" e "Receita"
+                        const optionDespesa = document.createElement('option');
+                        optionDespesa.value = 'despesa';
+                        optionDespesa.textContent = 'Despesa';
+                        tipoSelect.appendChild(optionDespesa);
+
+                        const optionReceita = document.createElement('option');
+                        optionReceita.value = 'receita';
+                        optionReceita.textContent = 'Receita';
+                        tipoSelect.appendChild(optionReceita);
+                    }
+                } else {
+                    console.error('Idade inválida');
+                }
+            });
+        } else {
+            console.error('Elemento com ID "pessoa" não encontrado.');
+        }
+    });
+</script>
