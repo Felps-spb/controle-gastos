@@ -13,14 +13,24 @@ utilizando tecnologias modernas e boas práticas de desenvolvimento.
 - Node.js: Ambiente de execução JavaScript para construir a aplicação.
 
 - Express.js: Framework para criação de APIs e rotas.
-
-- Mongoose: Biblioteca para conexão e interação com o banco de dados MongoDB.
-
+  
 - Express-Session: Gerenciamento de sessões de usuário.
 
 - Connect-Flash: Exibição de mensagens temporárias (flash messages) para feedback ao usuário.
 
->> Frontend:
+- Mongoose: Biblioteca para conexão e interação com o banco de dados MongoDB.
+  (necessario instalação do MONGODB na maquina)
+
+#### Instalador do mongo
+  ```
+  https://www.mongodb.com/try/download/community
+  ```
+#### Terminal do mongo
+  ```
+  https://www.mongodb.com/try/download/shell
+  ```
+
+> Frontend:
 
 - Handlebars: Engine de templates para renderização de páginas HTML.
 
