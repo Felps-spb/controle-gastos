@@ -1,3 +1,5 @@
+{{!-- Form de cadastro de transacoes --}}
+
 <div class="container mt-5">
     <div class="card rounded-3 shadow-lg">
         <div class="card-header bg-primary text-white">
@@ -35,6 +37,11 @@
         </div>
     </div>
 </div>
+
+
+{{!-- Script que realiza a verificacao de idade do usuario
+se o usuario for menor de idade a unica opcao no cadastro de transacacoes
+eh a de despesa, caso nao, aparace ao usuario as opcoes de despesa e receita. --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

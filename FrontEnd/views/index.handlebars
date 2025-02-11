@@ -1,27 +1,32 @@
-<div class="jumbotron jumbotron-fluid">
-    <div class="container">
-        <h1 class="display-4">Controle de Gastos</h1>
-        <p class="lead">sistema de controle de gastos residenciais</p>
+{{!-- Pagina principal da aplicacao
+onde podemos visualizar o historico total de receitas e despesas acumuladas.
+Tambem eh exibido ao usuario as transacoes individuais de cada pessoa cadastrada (Receitas e despesas) --}}
+
+<div class="p-5 mb-4 bg-dark rounded-3 text-white">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Total:</h1>
+        <p class="col-md-8 fs-4">Saldo líquido: R$ {{ saldoLiquido }}</p>
+        <p class="col-md-8 fs-4 text-success">Receitas totais: R$ {{ receitasTotais }}</p>
+        <p class="col-md-8 fs-4 text-danger">Despesas totais: R$ {{ despesasTotais }}</p>
     </div>
 </div>
 
-
 <h2>Transações:</h2>
-<ul class="list-group">
+<div class="d-flex flex-row flex-wrap card">
     {{#each pessoas}}
-    <div class="card mt-4">
-        <div class="card-body">
-            <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
-                <div class="card-header">{{this.nome}}</div>
-                <div class="card-body">
-                    <h5 class="card-title">Saldo: R$ {{this.saldo}}</h5>
-                    <p class="card-text text-success">Receitas: R$ {{this.receitas}}</p>
-                    <p class="card-text text-danger">Despesas: R$ -{{this.despesas}}</p>
-                </div>
+    <div class="w-25">
+        <div class="card text-white bg-dark m-3" style="max-width: 18rem;">
+            <div class="card-header">{{this.nome}}</div>
+            <div class="card-body">
+                <h5 class="card-title">Saldo: R$ {{this.saldo}}</h5>
+                <p class="card-text text-success">Receitas: R$ {{this.receitas}}</p>
+                <p class="card-text text-danger">Despesas: R$ -{{this.despesas}}</p>
             </div>
         </div>
     </div>
+
+
     {{else}}
     <li class="list-group-item">Nenhuma pessoa cadastrada.</li>
     {{/each}}
-</ul>
+</div>

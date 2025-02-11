@@ -1,20 +1,16 @@
-const flash = require('connect-flash')
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const mongoose = require('mongoose')
-const app = express();
+// Importação de modulos necessarios
+const flash = require('connect-flash'); // Para mensagens flash (ex: mensagens de sucesso/erro)
+const express = require('express'); // Framework para criar o servidor
+const session = require('express-session'); // Para gerenciar sessões de usuario
+const path = require('path'); // Para manipular caminhos de arquivos e diretorios
+const mongoose = require('mongoose'); // Para conectar e interagir com o MongoDB
+const app = express(); // Cria uma instancia do Express
 
-
-const Pessoa = require('./BackEnd/models/pessoa');
-const Transacao = require('./BackEnd/models/transacao');
-
-//mongoose
-
-mongoose.Promise = global.Promise;
+// Configuracao do Mongoose (conexao com o MongoDB)
+mongoose.Promise = global.Promise; // Usa Promises nativas do Node.js
 mongoose.connect('mongodb://localhost/ControleDeGastos', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    useNewUrlParser: true, // Evita warnings de depreciacao
+    useUnifiedTopology: true // Usa o novo motor de descoberta de servidores
 }).then(() => {
     console.log("Conectado ao MongoDB...");
 }).catch((err) => {
@@ -22,75 +18,51 @@ mongoose.connect('mongodb://localhost/ControleDeGastos', {
     process.exit(1);
 });
 
-//session
+// Configuracao da sessao
 app.use(session({
-    secret: 'meuSite',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }
+    secret: 'meuSite', // Chave secreta para assinar o cookie da sessao
+    resave: false, // Evita regravar a sessao se nao houver mudancas
+    saveUninitialized: false, // Evita salvar sessoes nao inicializadas
+    cookie: { secure: true } // Cookie seguro (recomendado para HTTPS)
 }));
 
-//middleware
+// Middleware para processar dados de formularios
+app.use(express.urlencoded({ extended: true })); // Permite o parsing de dados URL-encoded
+
+// Configuracao do connect-flash para mensagens flash
 app.use(flash());
-app.use(express.urlencoded({ extended: true }));
-
-//flash
 app.use((req, res, next) => {
-    res.locals.success_msg = req.flash('success_msg');
-    res.locals.error_msg = req.flash('error_msg');
-    res.locals.error = req.flash('error');
-    next();
+    res.locals.success_msg = req.flash('success_msg'); // Mensagens de sucesso
+    res.locals.error_msg = req.flash('error_msg'); // Mensagens de erro
+    res.locals.error = req.flash('error'); // Erros gerais
+    next(); // Passa o controle para o proximo middleware
 });
 
-
-//handlebars
+// Configuracao do Handlebars como engine de templates
 const expressHandlebars = require('express-handlebars');
-app.engine('handlebars', expressHandlebars.engine());
-app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'frontend/views'));
+app.engine('handlebars', expressHandlebars.engine()); // Define Handlebars como engine
+app.set('view engine', 'handlebars'); // Define a engine de visualizacao
+app.set('views', path.join(__dirname, 'frontend/views')); // Define o diretorio de views
 
-//public
-app.use(express.static(path.join(__dirname, 'frontEnd/public')));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
+// Configuracao de arquivos estaticos
+app.use(express.static(path.join(__dirname, 'public'))); // Serve arquivos estaticos da pasta 'public'
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist'))); // Serve arquivos do Bootstrap
 
-app.get('/', async (req, res) => {
-    try {
-        // Buscar todas as pessoas
-        const pessoas = await Pessoa.find().lean();
+// Importacao das rotas
+const usuarioRoutes = require('./BackEnd/routes/user'); // Rotas relacionadas a usuarios
+app.use('/pessoa', usuarioRoutes); // Define o prefixo '/pessoa' para as rotas de usuario
 
-        // Para cada pessoa, calcular receitas, despesas e saldo
-        const pessoasComTransacoes = await Promise.all(pessoas.map(async (pessoa) => {
-            const transacoes = await Transacao.find({ PessoaId: pessoa._id }).lean();
-            const receitas = transacoes.filter(t => t.tipo === 'receita').reduce((acc, t) => acc + t.valor, 0);
-            const despesas = transacoes.filter(t => t.tipo === 'despesa').reduce((acc, t) => acc + t.valor, 0);
-            const saldo = receitas - despesas;
+const transacaoRoutes = require('./BackEnd/routes/transacao'); // Rotas relacionadas a transacoes
+app.use('/transacao', transacaoRoutes); // Define o prefixo '/transacao' para as rotas de transacao
 
-            return {
-                ...pessoa,
-                receitas,
-                despesas,
-                saldo
-            };
-        }));
+// Importacao do controlador do dashboard
+const dashboardController = require('./BackEnd/controllers/dashboardController');
 
-        // Renderizar a view com os dados processados
-        res.render('index', { pessoas: pessoasComTransacoes });
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+// Rota principal (dashboard)
+app.get('/', dashboardController.getDashboard); // Rota para a pagina inicial
 
-
-const usuarioRoutes = require('./BackEnd/routes/user');
-app.use('/pessoa', usuarioRoutes);
-
-const transacaoRoutes = require('./BackEnd/routes/transacao');
-app.use('/transacao', transacaoRoutes)
-
-
-const port = process.env.port || 8080
+// Configuracao da porta do servidor
+const port = process.env.port || 8090; // Usa a porta definida no ambiente ou 8090 por padrao
 app.listen(port, () => {
-    console.log(`http://localhost:${port}`);
+    console.log(`http://localhost:${port}`); // Inicia o servidor e exibe a URL
 });
